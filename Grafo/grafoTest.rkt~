@@ -1,0 +1,28 @@
+#lang racket
+
+;;Test de funciones que crean el grafo
+
+
+(require "../../src/graphCreator/grafo.rkt")
+
+
+;;Lista vacia para ir agregando nodos y crear el grafo 
+(define graph '())
+
+
+;;Agrega los nodos recibidos en la lista al grafo
+(define (addAllNodesTest)
+  (set! graph (addAllNodes '(a b c) graph)))
+
+;;Agrega un nuevo nodo en el grafo
+(define (addNodeTest)
+  (set! graph (addNode 'c graph)))
+
+(define (addEdgeTest)
+  (set! graph (addEdge 'a 'b 5 #f graph))
+  (set! graph (addEdge 'c 'd 4 #t graph))
+  (set! graph (addEdge 'b 'f 3 #f graph))
+  (set! graph (addEdge 'e 'g 2 #f graph))
+  (set! graph (addEdge 'd 'f 1 #t graph))
+  (set! graph (addEdge 'd 'f 1 #t graph))
+  (set! graph (addEdge 'e 'g 2 #f graph)))
