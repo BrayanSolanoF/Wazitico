@@ -20,6 +20,5 @@
 
 (define (addEdgeTest)
   (set! graph (addEdge 'a 'b 5 #f graph))
-  (set! graph (addEdge 'a 'c 2 #f graph))
   (set! graph (addEdge 'c 'd 4 #t graph)))
   
