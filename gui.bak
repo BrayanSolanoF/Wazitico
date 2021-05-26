@@ -1,17 +1,20 @@
 #lang racket
 
 (require racket/gui)
+(require racket/draw)
+(require racket/gui map-widget)
+
 
 
 ;Creo el frame de mi ventana
 (define frame (new frame%
                    [label "Wazitico"]
-                   [width 300]
-                   [height 300]))
+                   ;[min-width 1000]
+                   ;[min-height 600]
+                   [stretchable-width #f]
+                   [stretchable-height #f]))
 
-;Creo paneles 
-;-----------------------------------------------------------Panel para mapa-----------------------------------------------
-(define mapa (new horizontal-panel%
+(define all (new horizontal-panel%
                   [parent frame]
                   [alignment '(right top)]
                   [min-width 10]	 
@@ -19,9 +22,24 @@
                   [stretchable-width #f]	 
                   [stretchable-height #f]))
 
-(define message (new message%
-                     (parent mapa)
-                     (label "AQUI VA EL MAPA")))
+;Creo paneles 
+;-----------------------------------------------------------Panel para mapa-----------------------------------------------
+(define mapa (new horizontal-panel%
+                  [parent all]
+                  [alignment '(right top)]
+                  [min-width 600]	 
+                  [min-height 400]
+                  [stretchable-width #f]	 
+                  [stretchable-height #f]))
+
+
+(define map (new map-widget% [parent mapa]))
+
+
+(define track-points ((define new-york #(40.6943 -73.9249))))
+(send map add-track track-points #f)
+(send map center-map)
+
 
 ;-----------------------------------------------------------Panel para mapa-----------------------------------------------
 
@@ -29,29 +47,33 @@
 
 ;-----------------------------------------------------------Panel para acciones-----------------------------------------------
 (define actions (new vertical-panel%
-                  [parent frame]
+                  [parent all]
                   [alignment '(left top)]
-                  [min-width 10]	 
-                  [min-height 10]
                   [stretchable-width #f]	 
-                  [stretchable-height #f]))
+                  [stretchable-height #f]
+                  ))
 
 ;Ruta
 (define ruta-box (new group-box-panel%
-                             (parent actions)
-                             (label "Calcular Ruta")))
+                             [parent actions]
+                             [label "Calcular Ruta"]))
 
 (define inicio (new text-field%
-                        (label "Ingrese Inicio")
-                        (parent ruta-box)))
+                        [label "Ingrese Inicio"]
+                        [parent ruta-box]))
 
 (define final (new text-field%
-                        (label "Ingrese Final")
+                        [label "Ingrese Final"]
                         (parent ruta-box)))
+
+;(define prueba(print "hellos"))
 
 (define button (new button%
                     (parent ruta-box)
-                    (label "Calcular")))
+                    (label "Calcular")
+                    ;(callback (print "hellos"))
+                    ))
+
 
 ;Agregar Nodo
 (define nodo-box (new group-box-panel%
@@ -64,7 +86,9 @@
 
 (define button-nodo (new button%
                     (parent nodo-box)
-                    (label "Agregar")))
+                    (label "Agregar")
+                    ;[callback (lambda (button-nodo 'button) (print-cake (random 30)))]
+                    ))
 
 ;Agregar caminos
 (define camino-box (new group-box-panel%
@@ -90,6 +114,8 @@
 
 ;Muestra la ventana
 (send frame show #t)
+
+
 
 
 
