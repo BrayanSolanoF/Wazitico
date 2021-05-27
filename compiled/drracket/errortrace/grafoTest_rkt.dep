@@ -1,0 +1,1 @@
+("8.0" ta6nt ("9815e1e52091d042e7fd5a7a80a28ad30286596c" . "ffc98b08c00b1d1d631557260ff639d9ca8cd286") #"C:\\Users\\falei\\OneDrive\\Documentos\\GitHub\\Wazitico\\Grafo\\..\\Grafo\\grafo.rkt" (collects #"errortrace" #"errortrace-key.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))
