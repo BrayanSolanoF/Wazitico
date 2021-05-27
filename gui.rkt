@@ -6,6 +6,7 @@
 (require racket/gui map-widget) ;; Biblioteca para el uso de la API del mapa
 (require 2htdp/batch-io) ;;Biblioteca para el manejo de archivos externos
 (require "grafo.rkt") ;; Lógica del programa
+(require "anchuraAlgorithm.rkt")
 
 
 
@@ -40,8 +41,8 @@
 ;; streacheble width y heignt: falso para que panel no se expanda
 (define mapa (new horizontal-panel%
                   [parent all]
-                  [min-width 600]	 
-                  [min-height 400]
+                  [min-width 800]	 
+                  [min-height 500]
                   [stretchable-width #f]	 
                   [stretchable-height #f]))
 
@@ -94,8 +95,11 @@
 ; Se agregan las marcas de los nodos del grafo 
 (pos ciudades-map)
 
+
+
 ;; Defino el grafo del mapa
 (define graph '())
+
 
 
 ;;Crea los nodos del mapa
@@ -107,6 +111,8 @@
 
 ;; Agrego ciudades de la lista ciudades-map al grafo
 (addNodes ciudades-map)
+
+(anchura '("LosAngeles" "34.05223" "118.24368")'("WashingtonD.C." "38.89511" "77.03637") graph )
 
 ;(print graph)
 
@@ -126,6 +132,12 @@
                   [stretchable-height #f]
                   ))
 
+
+(define (centre vec)
+  (send mapaa move-to vec)
+  (send mapaa clear)
+  (pos ciudades-map))
+
 ;; Botón para centrar el mapa a punto definido
 ;; Parent: Donde se ubica el botón
 ;; Label: etiqueta del botón
@@ -134,8 +146,12 @@
                     (parent actions)
                     (label "Centrar")
                     [callback (lambda (button-centre 'button)
-                     (send mapaa move-to #(39.29038 -76.61219)))] ;; Método de map-widget que posiciona el mapa en un punto dado
+                     (centre #(39.29038 -76.61219)))] ;; Método de map-widget que posiciona el mapa en un punto dado
                     ))
+
+
+
+;;------------------------------------------------------------------------------------------------------------------------------------
 
 ;; Group Box para los elementos necesarios para que el usuario consulte una ruta
 ;; Parent: Donde se ubica el Group box
@@ -145,12 +161,14 @@
                              [label "Calcular Ruta"]))
 
 
+
 ;; Text Field para que el usuario consulte indique el punto de inicio de la ruta a calcular
 ;; Parent: Donde se ubica text field
 ;; Label: etiqueta del text field
 (define inicio (new text-field%
                         [label "Ingrese Inicio"]
                         [parent ruta-box]))
+
 
 ;; Text Field para que el usuario indique el punto de llegada de la ruta a calcular
 ;; Parent: Donde se ubica text field
@@ -159,6 +177,30 @@
                         [label "Ingrese Final"]
                         (parent ruta-box)))
 
+'((("Boston" "42.35843" "71.05977")) (("NY" "40.71427" "74.00597") 3) (("Philadelphia" "39.95233" "75.16379") 1) (("WashingtonD.C." "38.89511" "77.03637") 1))
+
+(send mapaa add-track '(#(40.6943 -73.9249) #(41.8379 -87.6828)) #f)
+
+
+
+(define (trazar-ruta lista)
+  (send mapaa add-track '((vector (string->number (second (car lista))) (* -1 (string->number (third lista))))) #f)
+  (cond ((equal? (length lista) 2)
+         (send mapaa add-track (list (vector (string->number (second (caar lista))) (* -1 (string->number (third (caar lista)))))
+                                 (vector (string->number (second (caadr lista))) (* -1 (string->number (third (caadr lista)))))) #f))
+        (else (trazar-ruta (cdr lista)))
+        ))
+
+(trazar-ruta '((("Boston" "42.35843" "71.05977")) (("NY" "40.71427" "74.00597") 3) (("Philadelphia" "39.95233" "75.16379") 1) (("WashingtonD.C." "38.89511" "77.03637") 1)))
+
+(define (search-route ini fin)
+  (send mapaa clear)
+  (pos ciudades-map)
+  (trazar-ruta (car (anchura ini fin graph)))
+  )
+
+
+
 ;; Botón para calcular la ruta indicada por el usuario
 ;; Parent: Donde se ubica el botón
 ;; Label: etiqueta del botón
@@ -166,10 +208,13 @@
 (define button (new button%
                     (parent ruta-box)
                     (label "Calcular")
-                    ;(callback (print "hellos"))
-                    ))
+                    [callback (lambda (button 'button)
+                     (search-route (assoc (send inicio get-value) ciudades-map)
+                              (assoc (send final get-value) ciudades-map)))]))
 
 
+
+; --------------------------------------------------------------------------------------------------------------------
 ;; Group Box para los elementos necesarios para que el usuario agregue una ciudad
 ;; Parent: Donde se ubica el Group box
 ;; Label: etiqueta del Group box
@@ -227,8 +272,10 @@
 
 ;; Dibuja el camino en la interfaz y agrega edge al grafo
 (define (draw-track ini fin peso)
+  (send mapaa clear)
+  (pos ciudades-map)
   (send mapaa add-track (list (vec (assoc ini ciudades-map)) (vec (assoc fin ciudades-map))) #f) ;; Método Map-widget para trazar rutas
-  (set! graph (addEdge (assoc ini ciudades-map) (assoc fin ciudades-map) peso #f graph)) 
+  (set! graph (addEdge (assoc ini ciudades-map) (assoc fin ciudades-map) (string->number peso) #f graph)) 
   (print graph))
 
 
@@ -284,4 +331,5 @@
 
 
 
-
+'(((("Denver" "39.73915" "104.9847")) (("Boston" "42.35843" "71.05977") 2) (("Nashville" "36.16589" "86.78444") 1))
+  ((("Denver" "39.73915" "104.9847")) (("Nashville" "36.16589" "86.78444") 4)))

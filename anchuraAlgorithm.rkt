@@ -1,6 +1,7 @@
 #lang racket
 #| ANCHURA PRIMERO |#
 
+(provide anchura)
 
 (define (anchura ini fin grafo)
   (anchura-aux (list(list(list ini))) fin grafo '()))
