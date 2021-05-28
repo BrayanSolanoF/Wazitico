@@ -98,6 +98,9 @@
 
 
 
+;; Agrego ciudades de la lista ciudades-map al grafo
+(addNodes ciudades-map)
+
 ;;Crea los nodos del mapa
 (define (addNodes listaa)
   (set! graph (addAll listaa graph))
@@ -105,8 +108,7 @@
   (set! graph (addEdge '("Denver" "39.73915" "-104.9847") '("Nashville" "36.16589" "-86.78444") 4 #t graph)))
 
 
-;; Agrego ciudades de la lista ciudades-map al grafo
-(addNodes ciudades-map)
+
 
 
 ;(print graph)
